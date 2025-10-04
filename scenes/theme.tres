@@ -1,0 +1,10 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dvdk01djk6v8y"]
+
+[ext_resource type="FontFile" uid="uid://dyklfmlb8q4ti" path="res://assets/font/monogram.ttf" id="1_nx7ni"]
+
+[resource]
+Button/fonts/font = ExtResource("1_nx7ni")
+MarginContainer/constants/margin_bottom = 16
+MarginContainer/constants/margin_left = 16
+MarginContainer/constants/margin_right = 16
+MarginContainer/constants/margin_top = 16

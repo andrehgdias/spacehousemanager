@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3 uid="uid://dt0yco5kxgq2a"]
+
+[ext_resource type="Theme" uid="uid://dvdk01djk6v8y" path="res://scenes/theme.tres" id="1_efmwq"]
+[ext_resource type="Script" uid="uid://odmwmu3yg3lf" path="res://scenes/gui.gd" id="1_mfius"]
+
+[node name="GUI" type="CanvasLayer"]
+script = ExtResource("1_mfius")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_efmwq")
+
+[node name="PanelContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="BuildButton" type="Button" parent="MarginContainer/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Build"
+
+[node name="ShapesContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/PanelContainer/ShapesContainer"]
+layout_mode = 2
+
+[node name="SquareButton" type="Button" parent="MarginContainer/PanelContainer/ShapesContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Square"
+
+[node name="RectangleButton" type="Button" parent="MarginContainer/PanelContainer/ShapesContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Rectangle"
