@@ -11,8 +11,14 @@ signal lab_button_pressed
 signal hub_comms_button_pressed
 signal storage_button_pressed
 
+@onready var day_label: Label = %DayLabel
 @onready var crew_counter: Label = %CrewCounter
 @onready var funding_label: Label = %FundingLabel
+
+@onready var mission_panel: PanelContainer = $MarginContainer/MissionPanel
+@onready var mission_label: Label = %MissionLabel
+@onready var mission_count_down_label: Label = %MissionCountDownLabel
+@onready var mission_effect_label: Label = %MissionEffectLabel
 
 @onready var build_button: Button = %BuildButton
 @onready var dorm_button: Button = $MarginContainer/TopRight/ShapesContainer/DormButton
@@ -46,11 +52,16 @@ func _ready():
 	gym_button.mouse_exited.connect(_on_gym_button_mouse_exited)
 	
 	lab_button.pressed.connect(_on_kitchen_button_pressed)
-	# TO-DO
-	hub_comms_button.pressed.connect(_on_kitchen_button_pressed)
-	# TO-DO
+	lab_button.mouse_entered.connect(_on_lab_button_mouse_entered)
+	lab_button.mouse_exited.connect(_on_lab_button_mouse_exited)
+	
+	hub_comms_button.pressed.connect(_on_hub_comms_button_pressed)
+	hub_comms_button.mouse_entered.connect(_on_hub_comms_button_mouse_entered)
+	hub_comms_button.mouse_exited.connect(_on_hub_comms_button_mouse_exited)
+	
 	storage_button.pressed.connect(_on_kitchen_button_pressed)
-	# TO-DO
+	storage_button.mouse_entered.connect(_on_storage_button_mouse_entered)
+	storage_button.mouse_exited.connect(_on_storage_button_mouse_exited)
 	
 	shapes_container.visible = false
 
@@ -90,17 +101,29 @@ func _on_gym_button_mouse_exited():
 # ===== Lab ===== #
 func _on_lab_button_pressed():
 	emit_signal("lab_button_pressed")
-# TO-DO
+func _on_lab_button_mouse_entered():
+	var data = DataTypes.Data.get(DataTypes.Module.Lab)
+	show_popup(gym_button.global_position, data.title, data.description, data.price)
+func _on_lab_button_mouse_exited():
+	details_popup_panel.hide()
 
 # ===== Hub-Comms ===== #
 func _on_hub_comms_button_pressed():
 	emit_signal("hub_comms_button_pressed")
-# TO-DO
+func _on_hub_comms_button_mouse_entered():
+	var data = DataTypes.Data.get(DataTypes.Module.Hub_Comms)
+	show_popup(gym_button.global_position, data.title, data.description, data.price)
+func _on_hub_comms_button_mouse_exited():
+	details_popup_panel.hide()
 
 # ===== Storage ===== #
 func _on_storage_button_pressed():
 	emit_signal("storage_button_pressed")
-# TO-DO
+func _on_storage_button_mouse_entered():
+	var data = DataTypes.Data.get(DataTypes.Module.Storage)
+	show_popup(gym_button.global_position, data.title, data.description, data.price)
+func _on_storage_button_mouse_exited():
+	details_popup_panel.hide()
 
 
 # ===== Helpers ===== #
@@ -127,7 +150,6 @@ func handle_button_states():
 	kitchen_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Kitchen))
 	gym_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Gym))
 	#lab_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Lab))
-	#hub_comms_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Hub_Comms))
 	#storage_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Storage))
 	
 func set_money(money: int):
@@ -135,3 +157,24 @@ func set_money(money: int):
 
 func set_crew(crew_size: int, crew_capacity: int):
 	crew_counter.text = "Crew %d/%d" % [ crew_size, crew_capacity ]
+
+func set_day(day: int):
+	day_label.text = "Day %d" % day
+
+func disable_hub_comms_button():
+	hub_comms_button.disabled = true
+
+func update_mission_panel(mission: Dictionary, countdown: int):
+	if mission == {}:
+		print("No mission")
+		mission_panel.visible = false
+	else:
+		mission_panel.visible = true
+		mission_label.text = mission.name
+		mission_count_down_label.text = "Arrives in %d days" % countdown
+		if (mission.crew_change > 0):
+			mission_effect_label.text = "+%d Crew" % mission.crew_change
+		else:
+			mission_effect_label.text = "-%d Crew" % mission.crew_change
+			
+		
