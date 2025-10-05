@@ -4,6 +4,8 @@ extends Node
 const DEPLOY = preload("res://assets/sound/sfx/deploy_level-up.mp3")
 const MISSION_COMPLETE = preload("res://assets/sound/sfx/mission_complete_get1.mp3")
 const NEW_MISSION = preload("res://assets/sound/sfx/new_mission_Confirm_07.ogg")
+const ERROR = preload("res://assets/sound/sfx/error_007.ogg")
+const GAME_OVER = preload("res://assets/sound/sfx/game_over_Sequence_02.ogg")
 
 @onready var sfx_audio_stream_player: AudioStreamPlayer = %SFXAudioStreamPlayer
 @onready var state_machine: StateMachine = $StateMachine
@@ -34,9 +36,12 @@ var time_since_last_mission = 0
 
 @export var day_duration: float = 180 # seconds
 var elapsed_time: float = 0
+var last_mission_status: DataTypes.MissionStatus = DataTypes.MissionStatus.Arriving
+var days_until_game_over = 3
 
 func _ready():
 	handle_ui_signals()
+	gui.hide_warn()
 	gui.set_money(money)
 	gui.set_crew(crew_size, crew_capacity)
 	gui.update_mission_panel(current_mission, mission_countdown)
@@ -94,13 +99,17 @@ func pass_time(delta: float):
 func _next_day():
 	elapsed_time = 0
 	last_progression_time = 0
-	
+
 	day += 1
 	gui.set_day(day)
 	
-	mission_countdown -= 1
-	gui.update_mission_panel(current_mission, mission_countdown)
+	if last_mission_status == DataTypes.MissionStatus.Arriving:
+		mission_countdown -= 1
+		gui.update_mission_panel(current_mission, mission_countdown)
 	
+	if current_mission and mission_countdown == 0:
+		handle_mission()
+		
 	handle_progression(true)
 
 	
@@ -109,15 +118,12 @@ func handle_events():
 		if time_since_last_mission > randf_range(min_time_to_mission, max_time_to_mission):
 			generate_mission()
 			gui.update_mission_panel(current_mission, mission_countdown)		
-	elif current_mission and mission_countdown == 0:
-		handle_mission()
-	
 	# TODO random events?
 
 func handle_progression(is_new_day: bool):
 	if labs_deployed > 0:
 		if is_new_day or elapsed_time >= last_progression_time + progressison_tick:
-			var money_gain = 2500 * crew_size * labs_deployed
+			var money_gain = 2500 * randi_range(2, crew_size) * labs_deployed
 			print("Progression: money_gain = ", money_gain)
 			money += money_gain
 			last_progression_time = elapsed_time
@@ -166,24 +172,50 @@ func random_mission_name():
 	
 func handle_mission():
 	print("Handle mission")
-	var new_crew_count = crew_size + current_mission.crew_change
-	if(new_crew_count <= crew_capacity):
-		crew_size = new_crew_count
-		money += current_mission.payment
 		
-		mission_countdown = 0
-		current_mission = {}
-		
-		gui.update_mission_panel(current_mission, mission_countdown)
-		gui.set_crew(crew_size, crew_capacity)
-		gui.set_money(money)
-		
-		sfx_audio_stream_player.stream = MISSION_COMPLETE
+	if last_mission_status == DataTypes.MissionStatus.FailOnArrival:
+		days_until_game_over -= 1
+		sfx_audio_stream_player.stream = ERROR
 		sfx_audio_stream_player.play()
+		if days_until_game_over == 0:
+			last_mission_status = DataTypes.MissionStatus.GameOver
+	
+	if last_mission_status == DataTypes.MissionStatus.GameOver:
+		sfx_audio_stream_player.stream = GAME_OVER
+		sfx_audio_stream_player.play()
+		await get_tree().create_timer(0.8).timeout # We are creating and waiting for this signal
+		game_over()
 	else:
-		print("Not enough capacity")
-		# TODO endgame
-		# Wait another 2 days and check again
+		var new_crew_count = crew_size + current_mission.crew_change
+		if(new_crew_count <= crew_capacity):
+			crew_size = new_crew_count
+			money += current_mission.payment
+			
+			mission_countdown = 0
+			current_mission = {}
+			last_mission_status = DataTypes.MissionStatus.Arriving
+			
+			gui.update_mission_panel(current_mission, mission_countdown)
+			gui.set_crew(crew_size, crew_capacity)
+			gui.set_money(money)
+			gui.hide_warn()
+			
+			sfx_audio_stream_player.stream = MISSION_COMPLETE
+			sfx_audio_stream_player.play()
+		elif last_mission_status == DataTypes.MissionStatus.Arriving:
+			print("Not enough capacity")
+			last_mission_status = DataTypes.MissionStatus.FailOnArrival
+			days_until_game_over = 3
+			sfx_audio_stream_player.stream = ERROR
+			sfx_audio_stream_player.play()
+			gui.show_warn("Not enough crew capacity! You have %d days to expand your habitat..." % days_until_game_over)
+		else:
+			gui.show_warn("Not enough crew capacity! You have %d days to expand your habitat..." % days_until_game_over)
+
+
+func game_over():
+	gui.show_game_over()
+	get_tree().paused = true
 
 
 

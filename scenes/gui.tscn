@@ -93,55 +93,74 @@ size_flags_horizontal = 8
 size_flags_vertical = 0
 text = "Storage"
 
-[node name="MissionPanel" type="PanelContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/MissionPanel"]
+[node name="MissionPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/MissionPanel"]
 layout_mode = 2
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MissionPanel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="NextMissionContainer" type="VBoxContainer" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer"]
+[node name="NextMissionContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme = ExtResource("1_efmwq")
 
-[node name="MissionLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer/NextMissionContainer"]
+[node name="MissionLabel" type="Label" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer/NextMissionContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Mission Alpha"
 horizontal_alignment = 1
 
-[node name="MissionCountDownLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer/NextMissionContainer"]
+[node name="MissionCountDownLabel" type="Label" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer/NextMissionContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Arrives in 3 days"
 horizontal_alignment = 1
 
-[node name="VSeparator" type="VSeparator" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 0
 
-[node name="MissionEffectLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer/HBoxContainer"]
+[node name="MissionEffectLabel" type="Label" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "+ 3 Crew"
 
-[node name="MissionPaymentLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer/HBoxContainer"]
+[node name="MissionPaymentLabel" type="Label" parent="MarginContainer/VBoxContainer/MissionPanel/MarginContainer/HBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "+ 3 Crew"
+
+[node name="WarningContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/WarningContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="WarningLabel" type="Label" parent="MarginContainer/VBoxContainer/WarningContainer/MarginContainer"]
+layout_mode = 2
+text = "Not enough crew capacity! You have %d days to expand your habitat..."
 
 [node name="DetailsPopupPanel" type="PopupPanel" parent="."]
 unique_name_in_owner = true
@@ -205,3 +224,30 @@ autowrap_mode = 2
 
 [node name="UIAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
+
+[node name="GameOverPanel" type="Panel" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_efmwq")
+
+[node name="Label" type="Label" parent="GameOverPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -27.0
+offset_top = -11.5
+offset_right = 27.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "Game over"

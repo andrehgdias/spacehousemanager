@@ -17,7 +17,7 @@ signal storage_button_pressed
 @onready var crew_counter: Label = %CrewCounter
 @onready var funding_label: Label = %FundingLabel
 
-@onready var mission_panel: PanelContainer = $MarginContainer/MissionPanel
+@onready var mission_panel: PanelContainer = $MarginContainer/VBoxContainer/MissionPanel
 @onready var mission_label: Label = %MissionLabel
 @onready var mission_count_down_label: Label = %MissionCountDownLabel
 @onready var mission_effect_label: Label = %MissionEffectLabel
@@ -36,6 +36,10 @@ signal storage_button_pressed
 @onready var title_label: Label = %TitleLabel
 @onready var price_label: Label = %PriceLabel
 @onready var details_text: RichTextLabel = %DetailsText
+
+@onready var warning_container: PanelContainer = $MarginContainer/VBoxContainer/WarningContainer
+@onready var warning_label: Label = $MarginContainer/VBoxContainer/WarningContainer/MarginContainer/WarningLabel
+@onready var game_over_panel: Panel = $GameOverPanel
 
 var padding = 32
 
@@ -67,6 +71,8 @@ func _ready():
 	storage_button.mouse_exited.connect(_on_storage_button_mouse_exited)
 	
 	shapes_container.visible = false
+	warning_container.visible = false
+	game_over_panel.visible = false
 
 func _process(delta: float) -> void:
 	handle_button_states()
@@ -182,4 +188,13 @@ func update_mission_panel(mission: Dictionary, countdown: int):
 		
 		mission_payment_label.text = "$ %d" % mission.payment
 			
-		
+func show_warn(message: String):
+	warning_container.visible = true
+	warning_label.text = message
+	
+func hide_warn():
+	warning_container.visible = false
+
+func show_game_over():
+	game_over_panel.visible = true
+	

@@ -1,5 +1,11 @@
 class_name DataTypes
 
+enum MissionStatus {
+	Arriving,
+	FailOnArrival,
+	GameOver
+}
+
 enum Module {
 	None,
 	SleepingArea,
