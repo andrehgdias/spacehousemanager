@@ -9,24 +9,28 @@
 [ext_resource type="PackedScene" uid="uid://dt0yco5kxgq2a" path="res://scenes/gui.tscn" id="5_tbgi4"]
 [ext_resource type="Script" uid="uid://b3dpe3523qide" path="res://scenes/camera_2d.gd" id="8_tipki"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" node_paths=PackedStringArray("gui")]
 script = ExtResource("1_tefeu")
+gui = NodePath("GUI")
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("2_0wfyh")
 initial_state = NodePath("Gameplay")
 
-[node name="Gameplay" type="Node" parent="StateMachine"]
+[node name="Gameplay" type="Node" parent="StateMachine" node_paths=PackedStringArray("game_manager")]
 script = ExtResource("3_sugp2")
+game_manager = NodePath("../..")
 
 [node name="BuildingMode" type="Node" parent="StateMachine" node_paths=PackedStringArray("grid_root")]
 script = ExtResource("3_jyhfs")
 grid_root = NodePath("../../GridRoot")
 
-[node name="GUI" parent="." instance=ExtResource("5_tbgi4")]
+[node name="GUI" parent="." node_paths=PackedStringArray("game_manager") instance=ExtResource("5_tbgi4")]
+game_manager = NodePath("..")
 
 [node name="GridRoot" type="Node2D" parent="."]
 script = ExtResource("4_jyhfs")
+grid_size = 16
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
@@ -81,4 +85,5 @@ texture = ExtResource("2_o6xl0")
 centered = false
 offset = Vector2(1280, 720)
 
+[connection signal="place_module" from="StateMachine/BuildingMode" to="." method="_on_building_mode_place_module"]
 [connection signal="place_module" from="StateMachine/BuildingMode" to="GridRoot" method="_on_building_mode_place_module"]

@@ -5,9 +5,10 @@ extends Node2D
 
 var occupied: Dictionary = {}
 
-func _on_building_mode_place_module(module_scene: PackedScene, position: Vector2, rotation: float) -> void:
+func _on_building_mode_place_module(module: DataTypes.Module, module_scene: PackedScene, position: Vector2, rotation: float) -> void:
 	place_module(module_scene, position, rotation)
 
+# ===== Helpers ===== #
 func place_module(module_scene: PackedScene, position: Vector2, rotation: float):
 	var cell = global_position_to_cell(position)
 	if occupied.has(cell):

@@ -1,30 +1,109 @@
 class_name GUIManager
 extends CanvasLayer
 
+@export var game_manager: GameManager
+
 signal toggle_build_pressed
-signal square_button_pressed
-signal rectangle_button_pressed
+signal dorm_button_pressed
+signal kitchen_button_pressed
+signal gym_button_pressed
+signal lab_button_pressed
+signal hub_comms_button_pressed
+signal storage_button_pressed
+
+@onready var crew_counter: Label = %CrewCounter
+@onready var funding_label: Label = %FundingLabel
 
 @onready var build_button: Button = %BuildButton
-@onready var square_button: Button = $MarginContainer/PanelContainer/ShapesContainer/SquareButton
-@onready var rectangle_button: Button = $MarginContainer/PanelContainer/ShapesContainer/RectangleButton
+@onready var dorm_button: Button = $MarginContainer/TopRight/ShapesContainer/DormButton
+@onready var kitchen_button: Button = $MarginContainer/TopRight/ShapesContainer/KitchenButton
+@onready var gym_button: Button = $MarginContainer/TopRight/ShapesContainer/GymButton
+@onready var lab_button: Button = $MarginContainer/TopRight/ShapesContainer/LabButton
+@onready var hub_comms_button: Button = $MarginContainer/TopRight/ShapesContainer/HubCommsButton
+@onready var storage_button: Button = $MarginContainer/TopRight/ShapesContainer/StorageButton
+
 @onready var shapes_container: VBoxContainer = %ShapesContainer
+@onready var details_popup_panel: PopupPanel = %DetailsPopupPanel
+@onready var title_label: Label = %TitleLabel
+@onready var price_label: Label = %PriceLabel
+@onready var details_text: RichTextLabel = %DetailsText
+
+var padding = 32
 
 func _ready():
 	build_button.pressed.connect(_on_build_button_pressed)
-	square_button.pressed.connect(_on_square_button_pressed)
-	rectangle_button.pressed.connect(_on_rectangle_button_pressed)
+	
+	dorm_button.pressed.connect(_on_dorm_button_pressed)
+	dorm_button.mouse_entered.connect(_on_dorm_button_mouse_entered)
+	dorm_button.mouse_exited.connect(_on_dorm_button_mouse_exited)
+	
+	kitchen_button.pressed.connect(_on_kitchen_button_pressed)
+	kitchen_button.mouse_entered.connect(_on_kitchen_button_mouse_entered)
+	kitchen_button.mouse_exited.connect(_on_kitchen_button_mouse_exited)
+	
+	gym_button.pressed.connect(_on_kitchen_button_pressed)
+	gym_button.mouse_entered.connect(_on_gym_button_mouse_entered)
+	gym_button.mouse_exited.connect(_on_gym_button_mouse_exited)
+	
+	lab_button.pressed.connect(_on_kitchen_button_pressed)
+	# TO-DO
+	hub_comms_button.pressed.connect(_on_kitchen_button_pressed)
+	# TO-DO
+	storage_button.pressed.connect(_on_kitchen_button_pressed)
+	# TO-DO
+	
 	shapes_container.visible = false
+
+func _process(delta: float) -> void:
+	handle_button_states()
 
 func _on_build_button_pressed():
 	emit_signal("toggle_build_pressed")
-	
-func _on_square_button_pressed():
-	emit_signal("square_button_pressed")
-	
-func _on_rectangle_button_pressed():
-	emit_signal("rectangle_button_pressed")
 
+# ===== Dormitory ===== #
+func _on_dorm_button_pressed():
+	emit_signal("dorm_button_pressed")
+func _on_dorm_button_mouse_entered():
+	var data = DataTypes.Data.get(DataTypes.Module.SleepingArea)
+	show_popup(dorm_button.global_position, data.title, data.description, data.price)
+func _on_dorm_button_mouse_exited():
+	details_popup_panel.hide()
+
+# ===== Kitchen  ===== #
+func _on_kitchen_button_pressed():
+	emit_signal("kitchen_button_pressed")
+func _on_kitchen_button_mouse_entered():
+	var data = DataTypes.Data.get(DataTypes.Module.Kitchen)
+	show_popup(dorm_button.global_position, data.title, data.description, data.price)
+func _on_kitchen_button_mouse_exited():
+	details_popup_panel.hide()
+
+# ===== Gym ===== #
+func _on_gym_button_pressed():
+	emit_signal("gym_button_pressed")
+func _on_gym_button_mouse_entered():
+	var data = DataTypes.Data.get(DataTypes.Module.Gym)
+	show_popup(gym_button.global_position, data.title, data.description, data.price)
+func _on_gym_button_mouse_exited():
+	details_popup_panel.hide()
+
+# ===== Lab ===== #
+func _on_lab_button_pressed():
+	emit_signal("lab_button_pressed")
+# TO-DO
+
+# ===== Hub-Comms ===== #
+func _on_hub_comms_button_pressed():
+	emit_signal("hub_comms_button_pressed")
+# TO-DO
+
+# ===== Storage ===== #
+func _on_storage_button_pressed():
+	emit_signal("storage_button_pressed")
+# TO-DO
+
+
+# ===== Helpers ===== #
 func set_build_button_state(is_building: bool):
 	build_button.button_pressed = is_building
 	
@@ -34,3 +113,25 @@ func set_build_button_state(is_building: bool):
 	else:
 		build_button.text = "Build"
 		shapes_container.visible = false
+		
+func show_popup(origin_position: Vector2i, title: String, description: String, price: int):
+	details_popup_panel.set_position(Vector2(origin_position.x - details_popup_panel.get_size_with_decorations().x - padding, origin_position.y))
+	title_label.text = title
+	details_text.text = description
+	price_label.text = "$ %d" % price
+	details_popup_panel.reset_size()
+	details_popup_panel.popup()
+	
+func handle_button_states():
+	dorm_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.SleepingArea))
+	kitchen_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Kitchen))
+	gym_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Gym))
+	#lab_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Lab))
+	#hub_comms_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Hub_Comms))
+	#storage_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Storage))
+	
+func set_money(money: int):
+	funding_label.text = "$ %d" % money
+
+func set_crew(crew_size: int, crew_capacity: int):
+	crew_counter.text = "Crew %d/%d" % [ crew_size, crew_capacity ]

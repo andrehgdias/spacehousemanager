@@ -4,7 +4,13 @@
 
 [resource]
 Button/fonts/font = ExtResource("1_nx7ni")
+Label/fonts/font = ExtResource("1_nx7ni")
 MarginContainer/constants/margin_bottom = 16
 MarginContainer/constants/margin_left = 16
 MarginContainer/constants/margin_right = 16
 MarginContainer/constants/margin_top = 16
+RichTextLabel/fonts/bold_font = ExtResource("1_nx7ni")
+RichTextLabel/fonts/bold_italics_font = ExtResource("1_nx7ni")
+RichTextLabel/fonts/italics_font = ExtResource("1_nx7ni")
+RichTextLabel/fonts/mono_font = ExtResource("1_nx7ni")
+RichTextLabel/fonts/normal_font = ExtResource("1_nx7ni")

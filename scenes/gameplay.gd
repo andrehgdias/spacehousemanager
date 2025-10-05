@@ -1,5 +1,6 @@
 extends NodeState
 
+@export var game_manager: GameManager
 
 func _on_enter() -> void:
 	pass

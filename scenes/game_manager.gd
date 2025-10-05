@@ -1,18 +1,41 @@
+class_name GameManager
 extends Node
 
 @onready var state_machine: StateMachine = $StateMachine
-@onready var gui: CanvasLayer = $GUI
+@export var gui: GUIManager
+
+# ===== Gameplay Variables ===== #
+var money = 100000
+var crew_capacity = 0
+var crew_size = 0
 
 func _ready():
-	gui.toggle_build_pressed.connect(_on_toggle_build)
-	gui.square_button_pressed.connect(_on_square_button_pressed)
-	gui.rectangle_button_pressed.connect(_on_rectangle_button_pressed)
+	handle_ui_signals()
+	gui.set_money(money)
+	gui.set_crew(crew_size, crew_capacity)
 	state_machine.state_changed.connect(_on_state_changed)
 
 func _process(_delta):
-	# Check for keyboard shortcut
-	if Input.is_action_just_released("toggle_build_mode"):
-		_on_toggle_build()
+	pass
+
+# Listen to state machine transitions to update UI
+func _on_state_changed(old_state: String, new_state: String):
+	var is_building = new_state == "buildingmode"
+	gui.set_build_button_state(is_building)
+
+func can_afford(price: int) -> bool:
+	return price < money
+
+# ===== UI Handlers ===== #
+func handle_ui_signals():
+	gui.toggle_build_pressed.connect(_on_toggle_build)
+	
+	gui.dorm_button_pressed.connect(_on_dorm_button_pressed)
+	gui.kitchen_button_pressed.connect(_on_kitchen_button_pressed)
+	gui.gym_button_pressed.connect(_on_gym_button_pressed)
+	gui.lab_button_pressed.connect(_on_lab_button_pressed)
+	gui.hub_comms_button_pressed.connect(_on_hub_comms_button_pressed)
+	gui.storage_button_pressed.connect(_on_storage_button_pressed)
 
 func _on_toggle_build():
 	if state_machine.current_state_name == "gameplay":
@@ -20,15 +43,34 @@ func _on_toggle_build():
 	else:
 		state_machine.transition_to("Gameplay")
 		
-func _on_square_button_pressed():
+func _on_dorm_button_pressed():
 	if state_machine.current_state_name == "BuildingMode".to_lower():
-		(state_machine.current_state as BuildingModeState).selected_shape = DataTypes.Shape.Square
+		(state_machine.current_state as BuildingModeState).selected_module = DataTypes.Module.SleepingArea
 
-func _on_rectangle_button_pressed():
+func _on_kitchen_button_pressed():
 	if state_machine.current_state_name == "BuildingMode".to_lower():
-		(state_machine.current_state as BuildingModeState).selected_shape = DataTypes.Shape.Rectangle
+		(state_machine.current_state as BuildingModeState).selected_module = DataTypes.Module.Kitchen
 
-# Listen to state machine transitions to update UI
-func _on_state_changed(old_state: String, new_state: String):
-	var is_building = new_state == "buildingmode"
-	gui.set_build_button_state(is_building)
+func _on_gym_button_pressed():
+	if state_machine.current_state_name == "BuildingMode".to_lower():
+		(state_machine.current_state as BuildingModeState).selected_module = DataTypes.Module.Gym
+
+func _on_lab_button_pressed():
+	if state_machine.current_state_name == "BuildingMode".to_lower():
+		(state_machine.current_state as BuildingModeState).selected_module = DataTypes.Module.Lab
+
+func _on_hub_comms_button_pressed():
+	if state_machine.current_state_name == "BuildingMode".to_lower():
+		(state_machine.current_state as BuildingModeState).selected_module = DataTypes.Module.Hub_Comms
+
+func _on_storage_button_pressed():
+	if state_machine.current_state_name == "BuildingMode".to_lower():
+		(state_machine.current_state as BuildingModeState).selected_module = DataTypes.Module.Storage
+
+
+func _on_building_mode_place_module(module: DataTypes.Module, module_scene: PackedScene, position: Vector2, rotation: float) -> void:
+	money = money - DataTypes.get_price(module)
+	gui.set_money(money)
+	if module == DataTypes.Module.SleepingArea:
+		crew_capacity += 2
+		gui.set_crew(crew_size, crew_capacity)

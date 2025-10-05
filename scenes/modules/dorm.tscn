@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://drxbauwjwo8pf"]
+
+[ext_resource type="Texture2D" uid="uid://k5s8gbk6nsxp" path="res://assets/Tela-1.png" id="1_ae1yc"]
+
+[node name="Rectangle" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ae1yc")
+centered = false
+region_enabled = true
+region_rect = Rect2(112, 176, 128, 64)
