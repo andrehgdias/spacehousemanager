@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bcvrh4hawvpgd"
+path="res://.godot/imported/6 - Orbital Echoes (Loop).mp3-4658d78865b9e5edf5bef5ecb9a8196a.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/music/6 - Orbital Echoes (Loop).mp3"
+dest_files=["res://.godot/imported/6 - Orbital Echoes (Loop).mp3-4658d78865b9e5edf5bef5ecb9a8196a.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=0.0
+beat_count=0
+bar_beats=4

@@ -1,6 +1,11 @@
 class_name GameManager
 extends Node
 
+const DEPLOY = preload("res://assets/sound/sfx/deploy_level-up.mp3")
+const MISSION_COMPLETE = preload("res://assets/sound/sfx/mission_complete_get1.mp3")
+const NEW_MISSION = preload("res://assets/sound/sfx/new_mission_Confirm_07.ogg")
+
+@onready var sfx_audio_stream_player: AudioStreamPlayer = %SFXAudioStreamPlayer
 @onready var state_machine: StateMachine = $StateMachine
 @export var gui: GUIManager
 
@@ -12,6 +17,8 @@ var day = 1
 
 var hub_installed = false
 var first_mission_generated = false
+var second_mission_generated = false
+var labs_deployed = 0
 
 var mission_countdown = 0
 var current_mission: Dictionary = {}
@@ -38,6 +45,12 @@ func _ready():
 func _process(_delta):
 	if(Input.is_action_just_pressed("debug")):
 		print("elapsed_time: ", elapsed_time)
+		var min_neg = max(-(crew_size - 4), -4)  # ensure it doesn’t go above -1
+		var negatives = range(min_neg, 0)
+		var positives = range(1, 5)
+		var options = negatives + positives
+		var random_int = options[randi_range(0, options.size() - 1)]
+		print(negatives, positives, options, random_int)
 
 # Listen to state machine transitions to update UI
 func _on_state_changed(old_state: String, new_state: String):
@@ -55,10 +68,16 @@ func _on_building_mode_place_module(module: DataTypes.Module, module_scene: Pack
 	if module == DataTypes.Module.SleepingArea:
 		crew_capacity += 2
 		gui.set_crew(crew_size, crew_capacity)
+		
+	if module == DataTypes.Module.Lab:
+		labs_deployed += 1
+		
+	sfx_audio_stream_player.stream = DEPLOY
+	sfx_audio_stream_player.play()
 
 # ===== Helpers ===== #
 func can_afford(price: int) -> bool:
-	return price < money
+	return price <= money
 	
 func pass_time(delta: float):
 	elapsed_time += delta
@@ -96,12 +115,13 @@ func handle_events():
 	# TODO random events?
 
 func handle_progression(is_new_day: bool):
-	if is_new_day or elapsed_time >= last_progression_time + progressison_tick:
-		var money_gain = 2500 * randi_range(2,5)
-		print("Progression: money_gain = ", money_gain)
-		money += crew_size * money_gain
-		last_progression_time = elapsed_time
-		gui.set_money(money)
+	if labs_deployed > 0:
+		if is_new_day or elapsed_time >= last_progression_time + progressison_tick:
+			var money_gain = 2500 * crew_size * labs_deployed
+			print("Progression: money_gain = ", money_gain)
+			money += money_gain
+			last_progression_time = elapsed_time
+			gui.set_money(money)
 		
 func generate_mission():
 	print("New mission:")
@@ -109,22 +129,37 @@ func generate_mission():
 	
 	if first_mission_generated == false:
 		current_mission = {
+			"name": "AV One Alpha",
+			"crew_change": 2,
+			"days_to_arive": 1,
+			"payment": 35000
+		}
+		first_mission_generated = true
+	elif second_mission_generated == false:
+		current_mission = {
 			"name": "AV One Beyond",
 			"crew_change": 2,
 			"days_to_arive": 2,
-			"payment": 25000
+			"payment": 50000
 		}
-		first_mission_generated = true
+		second_mission_generated = true
 	else:
+		var min_side = -clampi(randi_range(2, 4), 2, crew_size - 2)
+		var negatives = range(min_side, 0)
+		var positives = range(1, 5)  # [1 .. crew_size+2]
+		var options = negatives + positives
+		var random_int = options[randi_range(0, options.size()-1)]
 		current_mission = {
 			"name": random_mission_name(),
-			"crew_change": randi_range(-clampi(randi_range(2, 4),2,crew_size - 2), 4),
+			"crew_change": random_int,
 			"days_to_arive": randi_range(2,4),
-			"payment": randi_range(1,5) * 20000
+			"payment": 7500 * clamp(abs(random_int), 1, 8)
 		}
 		
 	print(current_mission)
 	mission_countdown = current_mission.days_to_arive
+	sfx_audio_stream_player.stream = NEW_MISSION
+	sfx_audio_stream_player.play()
 
 func random_mission_name():
 	return names.pop_at(randf_range(0, names.size() - 1))
@@ -142,6 +177,9 @@ func handle_mission():
 		gui.update_mission_panel(current_mission, mission_countdown)
 		gui.set_crew(crew_size, crew_capacity)
 		gui.set_money(money)
+		
+		sfx_audio_stream_player.stream = MISSION_COMPLETE
+		sfx_audio_stream_player.play()
 	else:
 		print("Not enough capacity")
 		# TODO endgame

@@ -127,7 +127,18 @@ horizontal_alignment = 1
 [node name="VSeparator" type="VSeparator" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="MissionEffectLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="MissionEffectLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+ 3 Crew"
+
+[node name="MissionPaymentLabel" type="Label" parent="MarginContainer/MissionPanel/MarginContainer/HBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "+ 3 Crew"
@@ -191,3 +202,6 @@ Very useful to expand the crew capacity of you habitat.
 fit_content = true
 scroll_active = false
 autowrap_mode = 2
+
+[node name="UIAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true

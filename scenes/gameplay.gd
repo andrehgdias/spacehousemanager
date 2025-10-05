@@ -1,10 +1,12 @@
 extends NodeState
 
 @export var game_manager: GameManager
+@export var music: AudioStream
+@onready var audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 
 func _on_enter() -> void:
-	pass
-
+	audio_stream_player.stream = music
+	audio_stream_player.play()
 
 func _on_process(delta : float) -> void:
 	if(game_manager.hub_installed):

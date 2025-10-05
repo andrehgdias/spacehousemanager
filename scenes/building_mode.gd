@@ -1,6 +1,8 @@
 class_name BuildingModeState
 extends NodeState
 
+const CURSOR_BUILD = preload("res://assets/tile_0110.png")
+const CURSOR_NORMAL = preload("res://assets/tile_0086.png")
 
 @onready var module_dorms_scene: PackedScene = preload("res://scenes/modules/dorm.tscn")
 @onready var module_kitchen_scene: PackedScene = preload("res://scenes/modules/kitchen.tscn")
@@ -24,7 +26,12 @@ var module: Node2D = null
 
 signal place_module(module: DataTypes.Module, module_scene: PackedScene, position: Vector2, rotation: float)
 
+@export var music: AudioStream
+@onready var audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
+
 func _on_enter() -> void:
+	audio_stream_player.stream = music
+	audio_stream_player.play()
 	reset_building_state()
 
 func _on_process(_delta : float) -> void:
@@ -41,6 +48,7 @@ func _on_exit() -> void:
 	reset_building_state()
 
 func reset_building_state():
+	Input.set_custom_mouse_cursor(CURSOR_NORMAL)
 	selected_module = DataTypes.Module.None
 	if module:
 		module.queue_free()
@@ -65,6 +73,7 @@ func update_module_preview():
 		module.global_position = grid_root.snap_to_grid(mouse_world_pos)
 		
 	if module == null and selected_module != DataTypes.Module.None:
+		Input.set_custom_mouse_cursor(CURSOR_BUILD)
 		# Instantiate ghost preview
 		module = scenes.get(selected_module).instantiate()
 		module.modulate.a = 0.35

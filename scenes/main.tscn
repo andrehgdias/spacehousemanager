@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b27m30gielx0i"]
+[gd_scene load_steps=11 format=3 uid="uid://b27m30gielx0i"]
 
 [ext_resource type="Script" uid="uid://b5nmieekq048o" path="res://scenes/game_manager.gd" id="1_tefeu"]
 [ext_resource type="Script" uid="uid://cinguffmfs4xq" path="res://scripts/state_machine/state_machine.gd" id="2_0wfyh"]
@@ -6,7 +6,9 @@
 [ext_resource type="Script" uid="uid://em4q435qwdph" path="res://scenes/building_mode.gd" id="3_jyhfs"]
 [ext_resource type="Script" uid="uid://13no860i2cxq" path="res://scenes/gameplay.gd" id="3_sugp2"]
 [ext_resource type="Script" uid="uid://e8snxkuepi8h" path="res://scenes/grid_root.gd" id="4_jyhfs"]
+[ext_resource type="AudioStream" uid="uid://bl0a5m7jmejuk" path="res://assets/sound/music/2 - Galactic Odyssey (Loop).mp3" id="5_85g3d"]
 [ext_resource type="PackedScene" uid="uid://dt0yco5kxgq2a" path="res://scenes/gui.tscn" id="5_tbgi4"]
+[ext_resource type="AudioStream" uid="uid://bcvrh4hawvpgd" path="res://assets/sound/music/6 - Orbital Echoes (Loop).mp3" id="6_choun"]
 [ext_resource type="Script" uid="uid://b3dpe3523qide" path="res://scenes/camera_2d.gd" id="8_tipki"]
 
 [node name="Main" type="Node" node_paths=PackedStringArray("gui")]
@@ -24,10 +26,21 @@ initial_state = NodePath("Gameplay")
 [node name="Gameplay" type="Node" parent="StateMachine" node_paths=PackedStringArray("game_manager")]
 script = ExtResource("3_sugp2")
 game_manager = NodePath("../..")
+music = ExtResource("5_85g3d")
 
 [node name="BuildingMode" type="Node" parent="StateMachine" node_paths=PackedStringArray("grid_root")]
 script = ExtResource("3_jyhfs")
 grid_root = NodePath("../../GridRoot")
+music = ExtResource("6_choun")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_85g3d")
+volume_db = -3.0
+autoplay = true
+
+[node name="SFXAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
 
 [node name="GUI" parent="." node_paths=PackedStringArray("game_manager") instance=ExtResource("5_tbgi4")]
 game_manager = NodePath("..")

@@ -13,7 +13,7 @@ enum Module {
 static var Data: Dictionary = {
 	Module.SleepingArea: {
 		"title": "Dormitory",
-		"price": 50000,
+		"price": 40000,
 		"description": "This module has two slepping bags attached to the walls.
 
 Very useful to expand the crew capacity of you habitat.
@@ -27,7 +27,7 @@ Volume: 52,5 m³
 	},
 	Module.Kitchen: {
 		"title": "Kitchen",
-		"price": 75000,
+		"price": 65000,
 		"description": "This module contains multiple utensils for preparing food in space.
 
 Here your crew can hidrate food, prepare and warm it up to enjoy a nice meal with an amazing view.
@@ -41,7 +41,7 @@ Volume: 37,5 m³
 	},
 	Module.Gym: {
 		"title": "Gym",
-		"price": 60000,
+		"price": 55000,
 		"description": "This module contains multiple machines to help your crew stay healthy and entertained.
 
 Here your crew can workout using advanced machines dveloped by scients to work at 0 gravity.
@@ -55,7 +55,7 @@ Volume: 45 m³
 	},
 	Module.Hub_Comms: {
 		"title": "Hub/Comms",
-		"price": 85000,
+		"price": 75000,
 		"description": "This is the base module for any habitat/space station.
 
 This module is the entry point for the habitat and has a docking station where a mission can arrive with their crew.
@@ -74,6 +74,7 @@ Can deploy only one module of this type
 		"description": "This module has a glove box and work stations for science work.
 
 This area need to be sterillzed right after being used.
+Crew members will work here and generate funds.
 
 Width: 5 meters
 Hight: 3 meters

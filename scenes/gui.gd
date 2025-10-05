@@ -1,6 +1,8 @@
 class_name GUIManager
 extends CanvasLayer
 
+@onready var ui_audio_stream_player: AudioStreamPlayer = %UIAudioStreamPlayer
+
 @export var game_manager: GameManager
 
 signal toggle_build_pressed
@@ -19,6 +21,7 @@ signal storage_button_pressed
 @onready var mission_label: Label = %MissionLabel
 @onready var mission_count_down_label: Label = %MissionCountDownLabel
 @onready var mission_effect_label: Label = %MissionEffectLabel
+@onready var mission_payment_label: Label = %MissionPaymentLabel
 
 @onready var build_button: Button = %BuildButton
 @onready var dorm_button: Button = $MarginContainer/TopRight/ShapesContainer/DormButton
@@ -47,11 +50,11 @@ func _ready():
 	kitchen_button.mouse_entered.connect(_on_kitchen_button_mouse_entered)
 	kitchen_button.mouse_exited.connect(_on_kitchen_button_mouse_exited)
 	
-	gym_button.pressed.connect(_on_kitchen_button_pressed)
+	gym_button.pressed.connect(_on_gym_button_pressed)
 	gym_button.mouse_entered.connect(_on_gym_button_mouse_entered)
 	gym_button.mouse_exited.connect(_on_gym_button_mouse_exited)
 	
-	lab_button.pressed.connect(_on_kitchen_button_pressed)
+	lab_button.pressed.connect(_on_lab_button_pressed)
 	lab_button.mouse_entered.connect(_on_lab_button_mouse_entered)
 	lab_button.mouse_exited.connect(_on_lab_button_mouse_exited)
 	
@@ -59,7 +62,7 @@ func _ready():
 	hub_comms_button.mouse_entered.connect(_on_hub_comms_button_mouse_entered)
 	hub_comms_button.mouse_exited.connect(_on_hub_comms_button_mouse_exited)
 	
-	storage_button.pressed.connect(_on_kitchen_button_pressed)
+	storage_button.pressed.connect(_on_storage_button_pressed)
 	storage_button.mouse_entered.connect(_on_storage_button_mouse_entered)
 	storage_button.mouse_exited.connect(_on_storage_button_mouse_exited)
 	
@@ -149,8 +152,8 @@ func handle_button_states():
 	dorm_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.SleepingArea))
 	kitchen_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Kitchen))
 	gym_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Gym))
-	#lab_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Lab))
-	#storage_button.disabled = game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Storage))
+	lab_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Lab))
+	storage_button.disabled = !game_manager.can_afford(DataTypes.get_price(DataTypes.Module.Storage))
 	
 func set_money(money: int):
 	funding_label.text = "$ %d" % money
@@ -176,5 +179,7 @@ func update_mission_panel(mission: Dictionary, countdown: int):
 			mission_effect_label.text = "+%d Crew" % mission.crew_change
 		else:
 			mission_effect_label.text = "-%d Crew" % mission.crew_change
+		
+		mission_payment_label.text = "$ %d" % mission.payment
 			
 		
